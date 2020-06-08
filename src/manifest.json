@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/sketch-hq/SketchAPI/develop/docs/sketch-plugin-manifest-schema.json",
+    "icon": "icon.png",
+    "commands": [{
+        "name": "Export HTML",
+        "identifier": "Genus.export-identifier",
+        "script": "./main.js"
+    }],
+    "menu": {
+        "title": "Genus",
+        "items": [
+            "Genus.export-identifier"
+        ]
+    }
+}
