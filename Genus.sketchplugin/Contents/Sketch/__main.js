@@ -1,1 +1,1308 @@
-var globalThis=this,global=this;function __skpm_run(e,t){globalThis.context=t;try{var n=function(e){var t={};function n(r){if(t[r])return t[r].exports;var a=t[r]={i:r,l:!1,exports:{}};return e[r].call(a.exports,a,a.exports,n),a.l=!0,a.exports}return n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var a in e)n.d(r,a,function(t){return e[t]}.bind(null,a));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=2)}([function(e,t){e.exports=require("sketch")},function(e,t){e.exports=require("sketch/dom")},function(e,n,r){"use strict";r.r(n);var a=r(0),o=r.n(a);function i(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}var l=function(){function e(t){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.context=t}var t,n,r;return t=e,(n=[{key:"appKitWeightToCSSWeight",value:function(e){return[100,100,100,200,300,400,500,500,600,700,800,900,900,900,900,900][e]}},{key:"runCommand",value:function(e,t){var n=NSTask.alloc().init();n.setLaunchPath("/bin/bash"),n.setArguments(e),n.launch()}},{key:"alertError",value:function(e,t){t=t||"Genus Plugin Error:",this.alert(e,t),this.runCommand(["-c","afplay /System/Library/Sounds/Basso.aiff"])}},{key:"alert",value:function(e,t){t=t||"Genus",NSApplication.sharedApplication().displayDialog_withTitle(e,t)}},{key:"hexColor",value:function(e){console.log("color",e);var t=255*e.red(),n=255*e.green(),r=255*e.blue();return("#"+t.toString(16)+n.toString(16)+r.toString(16)).toUpperCase()}},{key:"nameForScale",value:function(e){return e>1?"@"+e+"x":""}},{key:"generateLayerName",value:function(e){return this.cleanString(e.name)+"-"+e.id}},{key:"cleanString",value:function(e){return(e=(e=e.replace(/\//g,"-")).replace(/[^\w\s]/gi,"")).replace(/\W+/g,"-")}},{key:"isMaskLayerInGroup",value:function(e){for(var t=!1,n=e.layers,r=0;r<n.length;r++)n[r].sketchObject.isMasked()&&(t=!0);return t}}])&&i(t.prototype,n),r&&i(t,r),e}();function s(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}var u=new l,c=function(){function e(t){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.context=t}var t,n,r;return t=e,(n=[{key:"saveTextToFile",value:function(e,t){NSString.stringWithFormat("%@",t).writeToFile_atomically_encoding_error(e,!0,NSUTF8StringEncoding,nil)}},{key:"getCurrentFilePath",value:function(){return this.context.document.fileURL().path().replace(/\.sketch$/,"")}},{key:"deleteFile",value:function(e){NSFileManager.defaultManager().removeItemAtPath_error(e,nil)}},{key:"createFolder",value:function(e){NSFileManager.defaultManager().createDirectoryAtPath_withIntermediateDirectories_attributes_error_(e,!0,nil,nil)}},{key:"renameFile",value:function(e,t){var n=NSFileManager.defaultManager();NSFileManager.defaultManager().fileExistsAtPath(e)?n.moveItemAtPath_toPath_error(e,t,nil):(errorMessage="FileNotFoundError: Error in renaming file: "+e,u.alertError(errorMessage))}}])&&s(t.prototype,n),r&&s(t,r),e}(),f={sketch:{exportFormat:"png",use_id_for_asset_name:!0,embedSvg:!1,cssFileName:"styles.css",htmlFileName:"index.html",imageFolder:"images/"}},g=f.sketch.exportFormat,h=f.sketch.use_id_for_asset_name,d=f.sketch.embedSvg,p=new l;function m(e){e=e;var t=r(1).getSelectedDocument(),n=t?t.selectedLayers:nil,a=function(){for(var e=NSMutableSet.alloc().init(),t=[],r=0;r<n.length;r++){var a=n.layers[r],o=void 0;null==(o="Artboard"==a.type?a:a.getParentArtboard())||e.containsObject(o)||(e.addObject(o),t.push(o))}return t}(),i=g,l=[1],s=!1,u=null;this.file_obj=new c(e),this.setOptions=function(e){i=e.imageFormat,s=e.embedSvg,l=e.imageScales},this.getSelection=function(){return n},this.getSelectedArtboards=function(){return a};var f={};function d(e){f[e]=[];var t=function e(t,n){var r="";return function(e,t){for(var n=e.layers,r=0;r<n.length;r++)t(n[r])}(t,(function(t){if(t.sketchObject.isVisible()){t.layerName=p.generateLayerName(t);var a=n+"<div class='sk-asset sk-"+t.layerName+"'>";if(v(t)){f[t.getParentArtboard()].push(t);r+=a+"</div>\n"}else if("Group"==t.type){var o=e(t,n+"\t");""!=o&&(r+=a+"\n",r+=o,r+=n+"</div>\n",f[t.getParentArtboard()].push(t))}else"Text"==t.type?(t=function(e,t){var n=e.sketchObject.attributedStringValue(),r=n.string(),a=NSMakeRange(0,n.length()),o=MOPointer.alloc().init(),i=[],l=[],s=[],u=[],c=MOPointer.alloc().init();for(;a.length>0;){i.push(n.attribute_atIndex_longestEffectiveRange_inRange(NSFontAttributeName,a.location,o,a));var f=n.attributesAtIndex_longestEffectiveRange_inRange(a.location,c,a);null!=f&&l.push(f.MSAttributedStringColorAttribute.hexValue()),s.push(o.value().location),u.push(o.value().length),a=NSMakeRange(NSMaxRange(o.value()),NSMaxRange(a)-NSMaxRange(o.value()))}for(var g=[100,100,100,200,300,400,500,500,600,700,800,900,900,900,900,900],h=[],d=0;d<i.length;d++){var p=new Object,m=i[d],v=l[d],y=NSFontManager.sharedFontManager().weightOfFont_(e.sketchObject.font()),b=g[y],x=m.familyName(),k=m.pointSize(),S=r.substr(s[d],u[d]);S=S.replace(/(?:\r\n|\r|\n)/g,"<br>"),p.text=S,p.fontFamilyName=x,p.weight=b,p.fontSize=k,p.font_color=v,h.push(p)}e.tspan=h;e.tspan,h.length;return e.tspanObject=h,e}(t),r+=a+function(e){for(var t="",n=e.tspan,r=n.length,a=0;a<r;a++){var o='<span class="span'+(a+1)+'">',i=n[a].text;t+=void 0===i?o+"</span>":o+i+"</span>"}return t}(t)+"</div>\n",f[t.getParentArtboard()].push(t)):console.log("Unhandled layer type encountered, Skipping export of layer ...")}})),r}(e,"\t\t\t"),n=function(e){var t="<html>\n";return t+="\t<head>\n",t+="\t\t<link href='styles.css' rel='stylesheet'>\n",t+='\t\t<meta charset="utf-8"/>\n',t+="\t</head>\n",t+='\t<body style="margin:0px;">\n',t+='\t <div style="width: '+Math.round(e.frame.width)+'px; height: 100%; position:relative; margin:auto;"> \n',t+="\t\t<div class='sk-ab sk-"+p.cleanString(e.name)+"'>\n"}(e);return n+=t,n+="\t\t</div>\n\t</div>\n\t</body>\n</html>"}function m(e){var t="/* Generated by Genus plugin */\n";return t+="\n",t+="/* Boiler plate CSS \n",t+="sk-ab is css style applied to full art board\n",t+="sk-asset is common css property applied to every css style generated by genus plugin \n",t+="*/ \n",t+="\n",t+=".sk-ab {\n\tposition: relative;\n\toverflow: hidden;\n}\n\n.sk-asset {\n\tposition: absolute;\n\tbackground-repeat: no-repeat;\n}\n",t+="\n",t+="/* Specific to "+e.name+" */\n",t+=function(e){var t=".sk-ab.sk-"+p.cleanString(e.name)+" {\n";e.sketchObject.hasBackgroundColor&&(t+="\tbackground-color: "+e.background.color+";\n");return t+="\twidth: "+Math.round(e.frame.width)+"px;\n",t+="\theight: "+Math.round(e.frame.height)+"px;\n",t+="}\n"}(e),t+="\n",f[e].forEach((function(e){t+=function(e){var t=".sk-asset.sk-"+e.layerName+" {\n";t+="\tleft: "+Math.round(e.frame.x)+"px;\n",t+="\ttop: "+Math.round(e.frame.y)+"px;\n";var n=void 0;if(v(e)){var r="images/"+e.layerName+"."+i;t+='\tbackground-image: url("'+r+'");\n';var a={formats:g,output:!1,trimmed:!1},s=o.a.export(e,a).toNSData(),u=NSImage.alloc().initWithData(s);n=u.size(),t+="\twidth: "+Math.round(n.width)+"px;\n",t+="\theight: "+Math.round(n.height)+"px;\n"}else t+="\twidth: "+Math.round(e.frame.width)+"px;\n",t+="\theight: "+Math.round(e.frame.height)+"px;\n";if(t+="}\n",t+="\n",v(e))for(var c in l){var f=l[c];if(f>1){var h=p.nameForScale(f);t+="@media only screen and (min--moz-device-pixel-ratio: "+f+"),\nonly screen and (-o-min-device-pixel-ratio: "+f+"/1),\nonly screen and (-webkit-min-device-pixel-ratio: "+f+"),\nonly screen and (min-device-pixel-ratio: "+f+") {\n",t+="\t.sk-asset.sk-"+e.layerName+" {\n";r="images/"+e.layerName+h+"."+i;t+='\t\tbackground-image: url("'+r+'");\n',t+="\t\tbackground-size: "+Math.round(n.width)+"px "+Math.round(n.height)+"px;\n",t+="\t}\n",t+="}\n"}}else"Text"==e.type&&(t+=function(e){var t=0;if(null!=e.tspan){var n=e.tspan;null!=n.length&&(t=n.length)}var r="";r+=".sk-asset.sk-"+e.layerName+" {\n",r+='\tfont-family: "'+e.style.fontFamily+'" ;\n',r+="\tfont-variant: "+e.style.fontVariant+" ;\n",r+='\tfont-stretch: "'+e.style.fontStretch+'" ;\n',r+="\tfont-weight: "+p.appKitWeightToCSSWeight(e.style.fontWeight)+" ;\n",r+="\tfont-style: "+e.style.fontStyle+" ;\n","uppercase"==e.style.textTransform&&(r+="\ttext-transform: uppercase;\n");e.style.kerning>0&&(r+="\tletter-spacing: "+e.style.kerning+";\n");null!=e.style.verticalAlignment&&1==t&&(r+="\tdisplay: table;\n");e.style.fills.length>0?r+="\tcolor: "+e.style.fills[0].color+" ;\n":r+="\tcolor: "+e.style.textColor+" ;\n";r+="\tfont-size: "+e.style.fontSize+".0px ;\n",r+="\tline-height: "+e.style.lineHeight+".0px ;\n",r+="\topacity: "+e.style.opacity+" ;\n",r+="\ttext-align: "+e.style.alignment+" ;\n",r+="\tfont-kerning: "+e.style.kerning+" ;\n",r+=function(e){var t="",n=0;if(null!=e.shadows){for(var r=0;r<e.shadows.length;r++)e.shadows[r].enabled&&(1==(n+=1)?t+="\ttext-shadow: ":n>1&&(t+=" , "),t+=x(e.shadows[r]));n>0&&(t+=" ;\n")}return t}(e.style),r+=function(e){var t="",n=0;if(null!=e.borders){for(var r=0;r<e.borders.length;r++)e.borders[r].enabled&&(1==(n+=1)?t+="\tborder: ":n>1&&(t+=" , "),t+=b(e.borders[r]));n>0&&(t+=" ;\n")}return t}(e.style),r+="}\n",r+="\n";for(var a=0;a<t;a++){var o="";o+=".sk-asset.sk-"+e.layerName+" .span"+(a+1)+" {\n";var i=n[a];void 0!==i.fontFamilyName&&(o+='\tfont-family: "'+i.fontFamilyName+'" ;\n'),void 0!==i.weight&&(o+="\tfont-weight: "+i.weight+" ;\n"),null!=e.style.verticalAlignment&&1==t&&(o+="\tdisplay: table-cell;\n","top"==e.style.verticalAlignment?o+="\tvertical-align: top;\n":"center"==e.style.verticalAlignment?o+="\tvertical-align: middle;\n":"bottom"==e.style.verticalAlignment&&(o+="\tvertical-align: bottom;\n")),void 0!==i.font_color&&(e.style.fills.length>0?o+="\tcolor: "+e.style.fills[0].color+" ;\n":o+="\tcolor: #"+i.font_color+" ;\n"),void 0!==i.fontSize&&(o+="\tfont-size: "+i.fontSize+".0px ;\n"),o+="}\n",r+=o+="\n"}return r}(e));return t}(e)})),t}function v(e){var t=function(e){return e.exportFormats.length>0}(e),n="Group"==e.type&&p.isMaskLayerInGroup(e),r="Text"!=e.type&&"Group"!=e.type;return t||n||r}function y(e,t,n){t.forEach((function(t){!function(e,t,n,r,a){var i={scales:"1, 2, 3",formats:r};for(var l in i.output=n,i["use-id-for-name"]=h,i.trimmed=!1,o.a.export(t,i),a){var s=a[l];if(s>1){var u=p.nameForScale(s),c=n+t.id+u+"."+r,f=n+t.layerName+u+"."+r;e.file_obj.renameFile(c,f)}else{c=n+t.id+"."+r,f=n+t.layerName+"."+r;e.file_obj.renameFile(c,f)}}}(e,t,n+"images/",i,l)}))}function b(e){var t="";return null!=e.thickness&&(t+=e.thickness+"px "),null!=e.color&&"Color"==e.fillType&&(t+=e.color),t}function x(e){var t="";return null!=e.x&&(t+=e.x+"px "),null!=e.y&&(t+=e.y+"px "),null!=e.blur&&(t+=e.x+"px "),null!=e.color&&(t+=e.color),t}this.run=function(e){u=e;var t=this;a.forEach((function(e){var n=u+p.cleanString(e.name)+"/";t.file_obj.deleteFile(n),t.file_obj.createFolder(n);var r=n+"index.html";t.file_obj.saveTextToFile(r,d(e));var a=n+"styles.css";t.file_obj.saveTextToFile(a,m(e)),s||(t.file_obj.createFolder(n+"images/"),y(t,f[e],n))}))}}var v=function(e){o.a.UI.message("Genus Plugin processing your artboard 🙌");try{var t=new m(e),n=t.getSelectedArtboards();if(null==n||n.length<1){return void p.alertError("Please select the artboards you want to export to HTML.","Genus Plugin Error: No Artboard Selected")}var r=function(e){var t={};return t.imageFormat=g,t.embedSvg=d,t.imageScales=[],t.imageScales.push(1),t.imageScales.push(2),t.imageScales.push(3),t}();t.setOptions(r);var a=t.file_obj.getCurrentFilePath(),i=a+"/";t.run(i);var l="Export finished ☺️, Export location: "+a;o.a.UI.message(l),p.alert(l,"genus")}catch(s){if(s!=nil){log(s);p.alertError("Oops Something went wrong: You may want to an raise issue on github, Copy paste following message:\n "+s)}}};n.default=function(){v(t)}}]);if("default"===e&&"function"==typeof n)n(t);else{if("function"!=typeof n[e])throw new Error('Missing export named "'+e+'". Your command should contain something like `export function " + key +"() {}`.');n[e](t)}}catch(r){if("undefined"==typeof process||!process.listenerCount||!process.listenerCount("uncaughtException"))throw r;process.emit("uncaughtException",r,"uncaughtException")}}globalThis.onRun=__skpm_run.bind(this,"default");
+var globalThis = this;
+var global = this;
+function __skpm_run (key, context) {
+  globalThis.context = context;
+  try {
+
+var exports =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/main.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/config.js":
+/*!***********************!*\
+  !*** ./src/config.js ***!
+  \***********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var CONFIG = {
+  sketch: {
+    exportFormat: "png",
+    // export format for teh images (svg or png)
+    use_id_for_asset_name: true,
+    // Will use sketch layer id for asset name
+    embedSvg: false,
+    imageScalesString: '1, 2, 3',
+    imageScales: [1, 2, 3],
+    cssFileName: "styles.css",
+    htmlFileName: "index.html",
+    imageFolder: "images/"
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (CONFIG);
+
+/***/ }),
+
+/***/ "./src/fileSystem.js":
+/*!***************************!*\
+  !*** ./src/fileSystem.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var sketch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch */ "sketch");
+/* harmony import */ var sketch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var utils_obj = new _utils__WEBPACK_IMPORTED_MODULE_1__["default"]();
+/**
+ *File systems class implementing file/dir operations like save, renaming, creating directories etc.
+ *
+ * @class fileSystem
+ */
+
+var fileSystem =
+/*#__PURE__*/
+function () {
+  function fileSystem(context) {
+    _classCallCheck(this, fileSystem);
+
+    this.context = context;
+  }
+  /**
+   * Method to save text to a file.
+   *
+   * @param {*} filename
+   * @param {*} text
+   * @memberof fileSystem
+   */
+
+
+  _createClass(fileSystem, [{
+    key: "saveTextToFile",
+    value: function saveTextToFile(filename, text) {
+      /* NSString.stringWithFormat and writeToFile_atomically_encoding_error 
+      * is not part of official sketch javascript api 
+      */
+      var string = NSString.stringWithFormat("%@", text);
+      string.writeToFile_atomically_encoding_error(filename, true, NSUTF8StringEncoding, nil);
+    }
+    /**
+     * Returns file path for the sketch context.
+     *
+     * @returns path for sketch file
+     * @memberof fileSystem
+     */
+
+  }, {
+    key: "getCurrentFilePath",
+    value: function getCurrentFilePath() {
+      return this.context.document.fileURL().path().replace(/\.sketch$/, '');
+    }
+    /**
+     * Deletes the file given the path.
+     *
+     * @param {*} path
+     * @memberof fileSystem
+     */
+
+  }, {
+    key: "deleteFile",
+    value: function deleteFile(path) {
+      /* NSFileManager.defaultManager and fileManager.removeItemAtPath_error
+      * is not part of official sketch javascript api 
+      */
+      var fileManager = NSFileManager.defaultManager();
+      fileManager.removeItemAtPath_error(path, nil);
+    }
+    /**
+     * Creates a folder given its name as argument.
+     *
+     * @param {*} name
+     * @memberof fileSystem
+     */
+
+  }, {
+    key: "createFolder",
+    value: function createFolder(name) {
+      /* NSFileManager.defaultManager and fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error_
+      * is not part of official sketch javascript api 
+      */
+      var fileManager = NSFileManager.defaultManager();
+      fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error_(name, true, nil, nil);
+    }
+    /**
+     * Rename the file given the source and destination.
+     *
+     * @param {*} srcName
+     * @param {*} dstName
+     * @memberof fileSystem
+     */
+
+  }, {
+    key: "renameFile",
+    value: function renameFile(srcName, dstName) {
+      /* NSFileManager.defaultManager and fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error_
+      * is not part of official sketch javascript api 
+      */
+      var fileManager = NSFileManager.defaultManager();
+      var exists = NSFileManager.defaultManager().fileExistsAtPath(srcName);
+
+      if (exists) {
+        fileManager.moveItemAtPath_toPath_error(srcName, dstName, nil);
+      } else {
+        errorMessage = "FileNotFoundError: Error in renaming file: " + srcName;
+        utils_obj.alertError(errorMessage);
+      }
+    }
+  }]);
+
+  return fileSystem;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (fileSystem);
+
+/***/ }),
+
+/***/ "./src/htmlCSSGenerator.js":
+/*!*********************************!*\
+  !*** ./src/htmlCSSGenerator.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var sketch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch */ "sketch");
+/* harmony import */ var sketch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _fileSystem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fileSystem */ "./src/fileSystem.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
+
+
+
+ // documentation: https://developer.sketchapp.com/reference/api/
+// Configuration parameters
+
+var default_asset_export_format = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.exportFormat;
+var use_id_for_name = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.use_id_for_asset_name;
+var embedSvgConf = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.embedSvg;
+var cssFileName = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.cssFileName;
+var htmlFileName = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.htmlFileName;
+var imageFolder = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.imageFolder;
+var imageScalesString = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.imageScalesString;
+var imageScales = _config__WEBPACK_IMPORTED_MODULE_3__["default"].sketch.imageScales;
+var utils_obj = new _utils__WEBPACK_IMPORTED_MODULE_2__["default"]();
+var fileSystem_obj = new _fileSystem__WEBPACK_IMPORTED_MODULE_1__["default"](context);
+/**
+ * Exporter for sketch to HTML.
+ *
+ * @param {*} context
+ */
+
+function Exporter(context) {
+  var context = context;
+
+  var doc = __webpack_require__(/*! sketch/dom */ "sketch/dom").getSelectedDocument();
+
+  var selection = doc ? doc.selectedLayers : nil;
+  var selectedArtboards = getSelectedArtboards();
+  var embedSvg = false;
+  var exportFolder = null;
+
+  this.getSelection = function () {
+    return selection;
+  };
+  /**
+   * getter method for selected artboards.
+   *
+   * @returns {Array<Object>}
+   */
+
+
+  this.getSelectedArtboards = function () {
+    return selectedArtboards;
+  };
+
+  function forEachLayer(group, func) {
+    var layers = group.layers;
+
+    for (var i = 0; i < layers.length; i++) {
+      func(layers[i]);
+    }
+  }
+
+  ;
+  /**
+   * Checks if layer marked for export
+   *
+   * @returns true if No of exportable formats greater that 1 else false
+   */
+
+  function layerMarkedForExport(layer) {
+    if (layer.markedForExport != undefined) {
+      return layer.markedForExport;
+    } else {
+      var formats = layer.exportFormats;
+      layer.markedForExport = formats.length > 0;
+      return layer.markedForExport;
+    }
+  }
+  /**
+   * Get the array of selected artboards in sketch file
+   *
+   * @returns {Array} list of artboards selected
+   */
+
+
+  function getSelectedArtboards() {
+    // Using Set so that selected artboards are not repeated and unique
+    var artboardSet = new Set();
+    var artboards = [];
+
+    for (var i = 0; i < selection.length; i++) {
+      var layer = selection.layers[i];
+      var artboard = undefined; // return artboard if selection is an artboard itself
+
+      if (layer.type == "Artboard") {
+        artboard = layer;
+      } // else return parent artboard of layer 
+      else {
+          artboard = layer.getParentArtboard();
+        } // Make sure artboard is not undefined and is unique using sets
+
+
+      if (artboard != undefined && !artboardSet.has(artboard.id)) {
+        artboardSet.add(artboard.id);
+        artboards.push(artboard);
+      }
+    }
+
+    return artboards;
+  }
+
+  var exportedLayers = {};
+  /**
+   * Method to generate html given the artboard.
+   *
+   * @param {*} artboard
+   * @returns {String} html corresponding to artboard
+   */
+
+  function generateHTML(artboard) {
+    // Create new array to save layers for export for each artboard
+    exportedLayers[artboard] = []; // Get HTML & CSS for children
+
+    var childrenHtml = generateHTMLForChildren(artboard, "\t\t\t"); // Generate HTML
+
+    var html = generateHTMLHeader(artboard);
+    html += childrenHtml;
+    html += generateHTMLFooter();
+    return html;
+  }
+  /**
+   * Method to generate CSS for the artboard.
+   *
+   * @param {*} artboard
+   * @returns {String} css for the artboard
+   */
+
+
+  function generateCSS(artboard) {
+    // Generate CSS
+    var css = "/* Generated by Genus plugin */\n";
+    css += "\n";
+    css += "/* Boiler plate CSS \n";
+    css += "sk-ab is css style applied to full art board\n";
+    css += "sk-asset is common css property applied to every css style generated by genus plugin \n";
+    css += "*/ \n";
+    css += "\n";
+    css += generateBoilerPlateCSS();
+    css += "\n";
+    css += "/* Specific to " + artboard.name + " */\n";
+    css += generateCSSForArtboard(artboard);
+    css += "\n";
+    exportedLayers[artboard].forEach(function (layer) {
+      css += generateCSSForLayer(layer);
+    });
+    return css;
+  }
+  /**
+   * Generates the <head> html content for the artboard
+   *
+   * @param {*} artboard
+   * @returns {String} content for <head> tag
+   */
+
+
+  function generateHTMLHeader(artboard) {
+    var html = "<html>\n";
+    html += "\t<head>\n";
+    html += "\t\t<link href='" + cssFileName + "' rel='stylesheet'>\n";
+    html += "\t\t<meta charset=\"utf-8\"/>\n";
+    html += "\t</head>\n";
+    html += "\t<body style=\"margin:0px;\">\n";
+    html += "\t <div style=\"width: " + Math.round(artboard.frame.width) + "px; height: 100%; position:relative; margin:auto;\"> \n";
+    html += "\t\t<div class='sk-ab sk-" + utils_obj.cleanString(artboard.name) + "'>\n";
+    return html;
+  }
+  /**
+   * Generates the closing tags for head, html and the div's inside the body
+   *
+   * @param {*} artboard
+   * @returns {String} html string for closing the html head, body and div tag
+   */
+
+
+  function generateHTMLFooter() {
+    var html = "\t\t</div>\n";
+    html += "\t</div>\n";
+    html += "\t</body>\n";
+    html += "</html>";
+    return html;
+  }
+  /**
+   * Generates the closing tags for head, html and the div's inside the body
+   *
+   * @returns {String} html string for closing the html head, body and div tag
+   */
+
+
+  function checkIfLayerExportedAsImage(layer) {
+    // If layer is marked as exportable in sketch export it should be
+    // exported as an image
+    var condition1 = layerMarkedForExport(layer); // If Layer is of type Group and that group has any element that has
+    // mask then export whole group as an image
+
+    var condition2 = layer.type == "Group" && utils_obj.isMaskLayerInGroup(layer); // Export any layer as an image which is not of type text or group
+    // e.g. Shape, Image, Symbols etc.
+
+    var condition3 = layer.type != "Text" && layer.type != "Group"; // Export layer as an image if any of these three conditions are met 
+
+    return condition1 || condition2 || condition3;
+  }
+  /**
+     * Main recursive function for generate html for any layer
+     *
+     * @returns {String} html 
+     */
+
+
+  function generateHTMLForChildren(group, tabs) {
+    var html = "";
+    forEachLayer(group, function (layer) {
+      if (!layer.sketchObject.isVisible()) {
+        return;
+      }
+
+      layer.layerName = utils_obj.generateLayerName(layer);
+      var openTag = tabs + "<div class='sk-asset sk-" + layer.layerName + "'>";
+      var closeTag = "</div>\n"; // This if condition should execute only if we want a layer to be exported as image
+
+      if (checkIfLayerExportedAsImage(layer)) {
+        exportedLayers[layer.getParentArtboard()].push(layer);
+        var embedCode = "";
+        html += openTag + embedCode + closeTag;
+      } // If layer is group...
+      else if (layer.type == "Group") {
+          var childrenHtml = generateHTMLForChildren(layer, tabs + "\t"); // If group is not empty, write it and its children to HTML
+
+          if (childrenHtml != "") {
+            html += openTag + "\n";
+            html += childrenHtml;
+            html += tabs + closeTag; // This layer needs to be exported to HTML
+
+            exportedLayers[layer.getParentArtboard()].push(layer);
+          }
+        } // If layer is text export text
+        else if (layer.type == "Text") {
+            layer = preprocessingTextLayer(layer);
+            html += openTag + generateHTMLTextForMultiText(layer) + closeTag;
+            exportedLayers[layer.getParentArtboard()].push(layer);
+          } else {
+            console.log("Unhandled layer type encountered, Skipping export of layer ...");
+          }
+    });
+    return html;
+  }
+  /**
+      * Reprocesses and extracts data for Multiple style text using MacOS Attributed strings 
+      * for text layers 
+      *
+      * @param {*} Text layer for which the html needs to be generated
+      * @param {*} tabs used for indentation of generated html text
+      * @returns layer with preprocessing done
+      */
+
+
+  function preprocessingTextLayer(layer, tabs) {
+    // Following code extracts multiple text styles from text using MacOS api, Sketch api does not support
+    // Multiple text styles in a layer 
+    // TODO : Mark all functions that are not part of sketch javascript api
+
+    /* layer.sketchObject.attributedStringValue(), NSMakeRange(0, attrStr.length()),MOPointer.alloc().init()
+    * is not part of official sketch javascript api 
+    */
+    var attrStr = layer.sketchObject.attributedStringValue();
+    var string_text = attrStr.string();
+    var limitRange = NSMakeRange(0, attrStr.length());
+    var effectiveRange = MOPointer.alloc().init();
+    var fonts = [];
+    var font_colors = [];
+    var stringStartIndices = [];
+    var stringLengths = [];
+    var effectiveRange2 = MOPointer.alloc().init();
+
+    while (limitRange.length > 0) {
+      // attribute_atIndex_longestEffectiveRange_inRange is not part of official sketch javascript api 
+      fonts.push(attrStr.attribute_atIndex_longestEffectiveRange_inRange(NSFontAttributeName, limitRange.location, effectiveRange, limitRange));
+      var attributes = attrStr.attributesAtIndex_longestEffectiveRange_inRange(limitRange.location, effectiveRange2, limitRange);
+
+      if (attributes != null) {
+        // attributes.MSAttributedStringColorAttribute.hexValue is not part of official sketch javascript api 
+        font_colors.push(attributes.MSAttributedStringColorAttribute.hexValue());
+      }
+
+      stringStartIndices.push(effectiveRange.value().location);
+      stringLengths.push(effectiveRange.value().length); // NSMakeRange, NSMaxRange is not part of official sketch javascript api 
+
+      limitRange = NSMakeRange(NSMaxRange(effectiveRange.value()), NSMaxRange(limitRange) - NSMaxRange(effectiveRange.value()));
+    }
+
+    var text_span_array = [];
+
+    for (var i = 0; i < fonts.length; i++) {
+      var text_span = new Object();
+      var font = fonts[i];
+      var font_color = font_colors[i];
+      /* NSFontManager.sharedFontManager().weightOfFont_ , layer.sketchObject.font()
+      * is not part of official sketch javascript api 
+      */
+
+      var weightIndex = NSFontManager.sharedFontManager().weightOfFont_(layer.sketchObject.font());
+      var fontName = font.fontName();
+      var fontFamilyName = font.familyName();
+      var fontSize = font.pointSize();
+      var weight = utils_obj.appKitWeightToCSSWeight(weightIndex, fontName);
+      var sub_string = string_text.substr(stringStartIndices[i], stringLengths[i]);
+      sub_string = sub_string.replace(/(?:\r\n|\r|\n)/g, '<br>');
+      text_span.text = sub_string;
+      text_span.fontFamilyName = fontFamilyName;
+      text_span.weight = weight;
+      text_span.fontSize = fontSize;
+      text_span.font_color = font_color;
+      text_span_array.push(text_span);
+    }
+
+    layer["tspan"] = text_span_array;
+    var spanArray = layer.tspan;
+    var spanLength = text_span_array.length; //console.log("spanLength: "+ spanLength);
+
+    layer["tspanObject"] = text_span_array;
+    return layer;
+  }
+  /**
+   * Exports images for all the layers to a specified destination, calls exportImages internally
+   *
+   * @param {*} layers list of layers to be exported
+   * @param {*} exportPath the path where the images need to be exported
+   */
+
+
+  function exportImages(layers, exportPath) {
+    layers.forEach(function (layer) {
+      exportImageForLayer(layer, exportPath + imageFolder, default_asset_export_format, imageScales);
+    });
+  }
+  /**
+   * Export images to a specified destination for a particular layer
+   *
+   * @param {*} layer layer to be exported
+   * @param {*} exportPath export path
+   * @param {*} imageFormat image format of exported images
+   * @param {*} imageScales scale of images to be exported (e.g 2x, 3x)
+   */
+
+
+  function exportImageForLayer(layer, exportPath, imageFormat, imageScales) {
+    var options = {
+      scales: imageScalesString,
+      formats: default_asset_export_format
+    };
+    options['output'] = exportPath;
+    options["use-id-for-name"] = use_id_for_name;
+    options.trimmed = false;
+    sketch__WEBPACK_IMPORTED_MODULE_0___default.a.export(layer, options);
+
+    for (var index in imageScales) {
+      var scale = imageScales[index];
+
+      if (scale > 1) {
+        var appendName = utils_obj.nameForScale(scale);
+        var srcName = exportPath + layer.id + appendName + "." + imageFormat;
+        var dstName = exportPath + layer.layerName + appendName + "." + imageFormat;
+        fileSystem_obj.renameFile(srcName, dstName);
+      } else {
+        var srcName = exportPath + layer.id + "." + imageFormat;
+        var dstName = exportPath + layer.layerName + "." + imageFormat;
+        fileSystem_obj.renameFile(srcName, dstName);
+      }
+    }
+  }
+  /**
+   * Generates html when there is multiple texts for the Sketch layer type "Text"
+   *
+   * @param {*} Sketch layer of type "Text"
+   * @returns {String} Returns collection of spans as string to be used exported in html
+   */
+
+
+  function generateHTMLTextForMultiText(layer) {
+    var str = "";
+    var spanArray = layer.tspan;
+    var spanLength = spanArray.length;
+
+    for (var i = 0; i < spanLength; i++) {
+      var openTag = '<span class="span' + (i + 1) + '">';
+      var closeTag = "</span>";
+      var spanElement = spanArray[i];
+      var spanText = spanElement.text;
+
+      if (spanText === undefined) {
+        str += openTag + "" + closeTag;
+      } else {
+        str += openTag + spanText + closeTag;
+      }
+    }
+
+    return str;
+  }
+  /**
+   * Generate border css style when border style is applied in the layer
+   *
+   * @param {*} style border style property from sketch
+   * @returns {String} css for border radius
+   */
+
+
+  function getBorderCss(style) {
+    var borderCss = "";
+    var border_applied_counter = 0;
+
+    if (style.borders != undefined) {
+      for (var k = 0; k < style.borders.length; k++) {
+        if (style.borders[k].enabled) {
+          border_applied_counter += 1;
+
+          if (border_applied_counter == 1) {
+            borderCss += "\tborder: ";
+          } else if (border_applied_counter > 1) {
+            borderCss += " , ";
+          }
+
+          borderCss += getBorderString(style.borders[k]);
+        }
+      }
+
+      if (border_applied_counter > 0) borderCss += " ;\n";
+    }
+
+    return borderCss;
+  }
+  /**
+      * Generate border string given border value
+      *
+      * @param {*} style border style property from sketch
+      * @returns {String} css for border radius
+      */
+
+
+  function getBorderString(border) {
+    var borderCssString = "";
+
+    if (border.thickness != undefined) {
+      borderCssString += border.thickness + "px ";
+    }
+
+    if (border.color != undefined && border.fillType == "Color") {
+      borderCssString += border.color;
+    }
+
+    return borderCssString;
+  }
+  /**
+   * Generates css when shadow style is applied in the layer
+   *
+   * @param {*} style style object for the shadow
+   * @returns {String} css for the shadow style
+   */
+
+
+  function getShadowCss(style) {
+    var shadowCss = "";
+    var shadow_applied_counter = 0;
+
+    if (style.shadows != undefined) {
+      for (var k = 0; k < style.shadows.length; k++) {
+        if (style.shadows[k].enabled) {
+          shadow_applied_counter += 1;
+
+          if (shadow_applied_counter == 1) {
+            shadowCss += "\ttext-shadow: ";
+          } else if (shadow_applied_counter > 1) {
+            shadowCss += " , ";
+          }
+
+          shadowCss += getShadowString(style.shadows[k]);
+        }
+      }
+
+      if (shadow_applied_counter > 0) shadowCss += " ;\n";
+    }
+
+    return shadowCss;
+  }
+  /**
+   * Generates css string for shadow property 
+   *
+   * @param {*} shadow object
+   * @returns {String} css for the shadow style
+   */
+
+
+  function getShadowString(shadow) {
+    var shadowCssString = ""; // h-shadow v-shadow blur-radius color|none|initial|inherit;
+
+    if (shadow.x != undefined) {
+      shadowCssString += shadow.x + "px ";
+    }
+
+    if (shadow.y != undefined) {
+      shadowCssString += shadow.y + "px ";
+    }
+
+    if (shadow.blur != undefined) {
+      shadowCssString += shadow.x + "px ";
+    }
+
+    if (shadow.color != undefined) {
+      shadowCssString += shadow.color;
+    }
+
+    return shadowCssString;
+  }
+  /**
+   * Generates CSS for the layer. 
+   * This gives absolute position for left and top, width and height, font styles, opacity etc.
+   *
+   * @param {*} layer layer for which the css needs to be generated
+   * @returns {String} css for the layer
+   */
+
+
+  function generateCSSForLayer(layer) {
+    // Variable to store actual image size of image layer
+    var nsImageSize = undefined;
+    var css = ".sk-asset.sk-" + layer.layerName + " {\n";
+    css += "\tleft: " + Math.round(layer.frame.x) + "px;\n";
+    css += "\ttop: " + Math.round(layer.frame.y) + "px;\n"; // Set background image for exported layer
+
+    if (checkIfLayerExportedAsImage(layer)) {
+      /* Sketch api often returns wrong width and height for an image. 
+       * e.g. In case of layer has shadow or mask property, to prevent bugs due to this
+       * Width and height or any image is programmatically extracted from actual exported image using
+       * unofficial Mac api , NSImage.alloc().initWithData, buffer.toNSData() and nsImage.size() functions are not 
+       * part of official sketch javascript api 
+       */
+      var options = {
+        formats: 'png',
+        output: false
+      };
+      options.trimmed = false;
+      var buffer = sketch__WEBPACK_IMPORTED_MODULE_0___default.a.export(layer, options);
+      var nsImageForBuffer = buffer.toNSData();
+      var nsImage = NSImage.alloc().initWithData(nsImageForBuffer);
+      nsImageSize = nsImage.size();
+      var image_full_path = imageFolder + layer.layerName + "." + default_asset_export_format;
+      css += "\tbackground-image: url(\"" + image_full_path + "\");\n";
+      css += "\twidth: " + Math.round(nsImageSize.width) + "px;\n";
+      css += "\theight: " + Math.round(nsImageSize.height) + "px;\n";
+    } else {
+      /* For layer type not image get width height from official sketch javascript api
+       */
+      css += "\twidth: " + Math.round(layer.frame.width) + "px;\n";
+      css += "\theight: " + Math.round(layer.frame.height) + "px;\n";
+    }
+
+    css += "}\n";
+    css += "\n";
+    /* If assets are exported at different scaled resolution, Following code will return different css properties 
+    * for different resolution devices, e.g. For desktop good resolution screen image picked could be 2x instead of 1x resolution
+    */
+
+    if (checkIfLayerExportedAsImage(layer)) {
+      for (var index in imageScales) {
+        var scale = imageScales[index];
+
+        if (scale > 1) {
+          var appendName = utils_obj.nameForScale(scale);
+          css += "@media only screen and (min--moz-device-pixel-ratio: " + scale + "),\n" + "only screen and (-o-min-device-pixel-ratio: " + scale + "/1),\n" + "only screen and (-webkit-min-device-pixel-ratio: " + scale + "),\n" + "only screen and (min-device-pixel-ratio: " + scale + ") {\n";
+          css += "\t.sk-asset.sk-" + layer.layerName + " {\n";
+          var image_full_path = imageFolder + layer.layerName + appendName + "." + default_asset_export_format;
+          css += "\t\tbackground-image: url(\"" + image_full_path + "\");\n";
+          css += "\t\tbackground-size: " + Math.round(nsImageSize.width) + "px " + Math.round(nsImageSize.height) + "px;\n";
+          css += "\t}\n";
+          css += "}\n";
+        }
+      }
+    } else if (layer.type == "Text") {
+      css += generateCSSForTextLayer(layer);
+    }
+
+    return css;
+  }
+  /**
+   * Generates CSS for the layer of type text. 
+   *
+   * @param {*} Text layer for which the css needs to be generated
+   * @returns {String} css for the layer
+   */
+
+
+  function generateCSSForTextLayer(layer) {
+    // For text without multitext span length should be 1 
+    var spanLength = 0;
+
+    if (layer.tspan != undefined) {
+      var spanArray = layer.tspan;
+
+      if (spanArray.length != undefined) {
+        spanLength = spanArray.length;
+      }
+    }
+
+    var css = "";
+    css += ".sk-asset.sk-" + layer.layerName + " {\n";
+    css += "\tfont-family: \"" + layer.style.fontFamily + "\" ;\n";
+    css += "\tfont-stretch: \"" + layer.style.fontStretch + "\" ;\n"; // Refer to this solution on sketch forum https://sketchplugins.com/d/193-how-to-get-font-weight/3 
+
+    css += "\tfont-weight: " + utils_obj.appKitWeightToCSSWeight(layer.style.fontWeight, layer.style.fontVariant) + " ;\n";
+    css += "\tfont-style: " + layer.style.fontStyle + " ;\n";
+
+    if (layer.style.textTransform == "uppercase") {
+      css += "\ttext-transform: uppercase" + ";\n";
+    }
+
+    if (layer.style.kerning > 0) {
+      css += "\tletter-spacing: " + layer.style.kerning + ";\n";
+    }
+
+    if (layer.style.verticalAlignment != undefined && spanLength == 1) {
+      css += "\tdisplay: table;\n";
+    } // If fills only first fill is applied
+
+
+    if (layer.style.fills.length > 0) {
+      css += "\tcolor: " + layer.style.fills[0].color + " ;\n";
+    } else {
+      css += "\tcolor: " + layer.style.textColor + " ;\n";
+    }
+
+    css += "\tfont-size: " + layer.style.fontSize + ".0px ;\n";
+    css += "\tline-height: " + layer.style.lineHeight + ".0px ;\n";
+    css += "\topacity: " + layer.style.opacity + " ;\n";
+    css += "\ttext-align: " + layer.style.alignment + " ;\n";
+    css += "\tfont-kerning: " + layer.style.kerning + " ;\n";
+    css += getShadowCss(layer.style);
+    css += getBorderCss(layer.style);
+    css += "}\n";
+    css += "\n";
+
+    for (var i = 0; i < spanLength; i++) {
+      var spanCss = "";
+      spanCss += ".sk-asset.sk-" + layer.layerName + " .span" + (i + 1) + " {\n";
+      var spanElement = spanArray[i];
+
+      if (!(spanElement.fontFamilyName === undefined)) {
+        spanCss += "\tfont-family: \"" + spanElement.fontFamilyName + "\" ;\n";
+      }
+
+      if (!(spanElement.weight === undefined)) {
+        spanCss += "\tfont-weight: " + spanElement.weight + " ;\n";
+      }
+
+      if (layer.style.verticalAlignment != undefined && spanLength == 1) {
+        spanCss += "\tdisplay: table-cell;\n";
+        if (layer.style.verticalAlignment == "top") spanCss += "\tvertical-align: top;\n";else if (layer.style.verticalAlignment == "center") spanCss += "\tvertical-align: middle;\n";else if (layer.style.verticalAlignment == "bottom") spanCss += "\tvertical-align: bottom;\n";
+      }
+
+      if (!(spanElement.font_color === undefined)) {
+        if (layer.style.fills.length > 0) {
+          spanCss += "\tcolor: " + layer.style.fills[0].color + " ;\n";
+        } else {
+          spanCss += "\tcolor: #" + spanElement.font_color + " ;\n";
+        }
+      }
+
+      if (!(spanElement.fontSize === undefined)) {
+        spanCss += "\tfont-size: " + spanElement.fontSize + ".0px ;\n";
+      }
+
+      spanCss += "}\n";
+      spanCss += "\n";
+      css += spanCss;
+    }
+
+    return css;
+  }
+  /**
+   * Generates page level css
+   *
+   * @returns {String} global css for the page
+   */
+
+
+  function generateBoilerPlateCSS() {
+    var css = ".sk-ab {\n" + "\tposition: relative;\n" + "\toverflow: hidden;\n" + "}\n";
+    css += "\n";
+    css += ".sk-asset {\n" + "\tposition: absolute;\n" + "\tbackground-repeat: no-repeat;\n" + "}\n";
+    return css;
+  }
+  /**
+   * Generates CSS for the artboard div
+   *
+   * @param {*} artboard
+   * @returns {String} css for artboard div
+   */
+
+
+  function generateCSSForArtboard(artboard) {
+    var css = ".sk-ab.sk-" + utils_obj.cleanString(artboard.name) + " {\n";
+
+    if (artboard.sketchObject.hasBackgroundColor) {
+      css += "\tbackground-color: " + artboard.background.color + ";\n";
+    }
+
+    css += "\twidth: " + Math.round(artboard.frame.width) + "px;\n";
+    css += "\theight: " + Math.round(artboard.frame.height) + "px;\n";
+    css += "}\n";
+    return css;
+  }
+  /**
+   * Run sequence of steps
+   *  1. creates folder for exporting
+   *  2. generates html and css
+   *  3. save text to apt files
+   *  4. export images for layers
+   *
+   * @param {*} folder where the results need to be exported
+   */
+
+
+  this.run = function (folder) {
+    exportFolder = folder;
+    selectedArtboards.forEach(function (artboard) {
+      var exportPath = exportFolder + utils_obj.cleanString(artboard.name) + "/"; // Delete any previously generated folders
+
+      fileSystem_obj.deleteFile(exportPath);
+      fileSystem_obj.createFolder(exportPath);
+      var htmlPath = exportPath + htmlFileName;
+      fileSystem_obj.saveTextToFile(htmlPath, generateHTML(artboard));
+      var cssPath = exportPath + cssFileName;
+      fileSystem_obj.saveTextToFile(cssPath, generateCSS(artboard));
+
+      if (!embedSvg) {
+        fileSystem_obj.createFolder(exportPath + imageFolder);
+        exportImages(exportedLayers[artboard], exportPath);
+      }
+    });
+  };
+}
+/**
+ * This method uses exported function to perform sketch 2 html export, and is also exposed to other modules for use.
+ *
+ * @param {*} context sketch context
+ * @returns
+ */
+
+
+function exportFullHTML(context) {
+  sketch__WEBPACK_IMPORTED_MODULE_0___default.a.UI.message("Genus Plugin processing your artboard 🙌");
+
+  try {
+    var exporter = new Exporter(context);
+    var selectedArtboards = exporter.getSelectedArtboards();
+
+    if (selectedArtboards == undefined || selectedArtboards.length < 1) {
+      var errorMsg = "Please select the artboards you want to export to HTML.";
+      var errorMsgTitle = "Genus Plugin Error: No Artboard Selected";
+      utils_obj.alertError(errorMsg, errorMsgTitle);
+      return;
+    } // Use the filesystem class to generate directory path
+
+
+    var currentDirectoryPath = fileSystem_obj.getCurrentFilePath();
+    var exportPath = currentDirectoryPath + "/";
+    exporter.run(exportPath);
+    var alertMessage = "Export finished ☺️, Export location: " + currentDirectoryPath;
+    sketch__WEBPACK_IMPORTED_MODULE_0___default.a.UI.message(alertMessage);
+    utils_obj.alert(alertMessage, "genus");
+  } catch (e) {
+    if (e != nil) {
+      // Nil error means plugin was exited
+      log(e);
+      var msg = "Oops Something went wrong: You may want to an raise issue on github, Copy paste following message:\n ";
+      utils_obj.alertError(msg + e);
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (exportFullHTML);
+
+/***/ }),
+
+/***/ "./src/main.js":
+/*!*********************!*\
+  !*** ./src/main.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _htmlCSSGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./htmlCSSGenerator */ "./src/htmlCSSGenerator.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (function () {
+  Object(_htmlCSSGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])(context);
+});
+
+/***/ }),
+
+/***/ "./src/utils.js":
+/*!**********************!*\
+  !*** ./src/utils.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var sketch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch */ "sketch");
+/* harmony import */ var sketch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch__WEBPACK_IMPORTED_MODULE_0__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+/**
+ *Various common utility functions are implemented here
+ *
+ * @class utils
+ */
+
+var utils =
+/*#__PURE__*/
+function () {
+  function utils(context) {
+    _classCallCheck(this, utils);
+
+    this.context = context;
+  }
+  /**
+   * Method to return css weight given numerical weight number returned by sketch api
+   * Refer to this link https://sketchplugins.com/d/193-how-to-get-font-weight/3 
+   * @param {*} weight returned by sketch api
+   * @returns weight in integer
+   */
+
+
+  _createClass(utils, [{
+    key: "appKitWeightToCSSWeight",
+    value: function appKitWeightToCSSWeight(weight, fontName) {
+      //console.log("weightIndex", weight)
+      //console.log("fontName", fontName)
+
+      /**   For font name to font weight mapping check links 
+       *  https://docs.microsoft.com/en-us/typography/opentype/spec/os2#usweightclass
+       *  https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
+       */
+      if (fontName != undefined) {
+        fontName = fontName.toLowerCase();
+        if (fontName.includes("thin") || fontName.includes("hairline")) return 100;else if (fontName.includes("extra light") || fontName.includes("ultra light")) return 200;else if (fontName.includes("light")) return 300;else if (fontName.includes("regular") || fontName.includes("normal")) return 400;else if (fontName.includes("medium")) return 500;else if (fontName.includes("semi bold") || fontName.includes("demi bold")) return 600;else if (fontName.includes("bold")) return 700;else if (fontName.includes("extra bold") || fontName.includes("ultra bold")) return 800;else if (fontName.includes("black") || fontName.includes("heavy")) return 900;else if (fontName.includes("extra black") || fontName.includes("ultra black")) return 950;
+      } //console.log("weight calculated by this index")
+
+
+      return [100, 100, 100, 200, 300, 400, 500, 500, 600, 700, 800, 900, 900, 900, 900, 900][weight];
+    }
+    /**
+     * Method to run arbitrary command line
+     *
+     * @param {*} cmd command that needs to be run 
+     * @param {*} path for command 
+     * @returns None
+     */
+
+  }, {
+    key: "runCommand",
+    value: function runCommand(cmd, path) {
+      /* NSTask.alloc().init(), task.setLaunchPath, task.setArguments and task.launch()
+      * are not part of official sketch javascript api 
+      */
+      var task = NSTask.alloc().init();
+      task.setLaunchPath("/bin/bash");
+      task.setArguments(cmd);
+      task.launch();
+    }
+    /**
+     * Method to display alert error with sound 
+     *
+     * @param {*} msg for error
+     * @param {*} title for error message
+     * @returns None
+     */
+
+  }, {
+    key: "alertError",
+    value: function alertError(msg, title) {
+      title = title || "Genus Plugin Error:";
+      this.alert(msg, title);
+      this.runCommand(['-c', 'afplay /System/Library/Sounds/Basso.aiff']);
+    }
+    /**
+     * Method to display alert 
+     *
+     * @param {*} msg for error
+     * @param {*} title for error message
+     * @returns None
+     */
+
+  }, {
+    key: "alert",
+    value: function alert(msg, title) {
+      /* NSApplication.sharedApplication and app.displayDialog_withTitle functions
+      * are not part of official sketch javascript api 
+      */
+      title = title || "Genus";
+      var app = NSApplication.sharedApplication();
+      app.displayDialog_withTitle(msg, title);
+    }
+    /**
+     * Convert color to hex string representation of color 
+     *
+     * @param {*} color value
+     * @returns string hex value of color 
+     */
+
+  }, {
+    key: "hexColor",
+    value: function hexColor(color) {
+      console.log("color", color);
+      var r = color.red() * 255;
+      var g = color.green() * 255;
+      var b = color.blue() * 255;
+      return ("#" + r.toString(16) + g.toString(16) + b.toString(16)).toUpperCase();
+    }
+    /**
+     * Utility function for generating append string for scaled images
+     *
+     * @param {*} scale value
+     * @returns string 
+     */
+
+  }, {
+    key: "nameForScale",
+    value: function nameForScale(scale) {
+      return scale > 1 ? "@" + scale + "x" : "";
+    }
+    /**
+     * Generate string name for layer name with layer name and id so that name 
+     * is unique 
+     *
+     * @param {*} sketch layer
+     * @returns string 
+     */
+
+  }, {
+    key: "generateLayerName",
+    value: function generateLayerName(layer) {
+      var layerExportName = this.cleanString(layer.name) + "-" + layer.id;
+      return layerExportName;
+    }
+    /**
+     * Utility function for removing/replace unwanted chars from string
+     *
+     * @param {*} input string
+     * @returns output cleaned string 
+     */
+
+  }, {
+    key: "cleanString",
+    value: function cleanString(str) {
+      str = str.replace(/\//g, "-");
+      str = str.replace(/[^\w\s]/gi, '');
+      return str.replace(/\W+/g, "-");
+    }
+    /**
+     * Checks if there is mask layer in the group
+     *
+     * @param {*} group sketch group
+     * @returns {Boolean} true if mask present and false otherwise
+     */
+
+  }, {
+    key: "isMaskLayerInGroup",
+    value: function isMaskLayerInGroup(group) {
+      if (group.isMaskLayerInGroup != undefined) {
+        return group.isMaskLayerInGroup;
+      } else {
+        var maskPresent = false;
+        var layers = group.layers;
+        var maskLayers = [];
+
+        for (var i = 0; i < layers.length; i++) {
+          var layer = layers[i];
+          if (layer.sketchObject.isMasked()) maskPresent = true;
+        }
+
+        group.isMaskLayerInGroup = maskPresent;
+        return group.isMaskLayerInGroup;
+      }
+    }
+  }]);
+
+  return utils;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (utils);
+
+/***/ }),
+
+/***/ "sketch":
+/*!*************************!*\
+  !*** external "sketch" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("sketch");
+
+/***/ }),
+
+/***/ "sketch/dom":
+/*!*****************************!*\
+  !*** external "sketch/dom" ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("sketch/dom");
+
+/***/ })
+
+/******/ });
+    if (key === 'default' && typeof exports === 'function') {
+      exports(context);
+    } else if (typeof exports[key] !== 'function') {
+      throw new Error('Missing export named "' + key + '". Your command should contain something like `export function " + key +"() {}`.');
+    } else {
+      exports[key](context);
+    }
+  } catch (err) {
+    if (typeof process !== 'undefined' && process.listenerCount && process.listenerCount('uncaughtException')) {
+      process.emit("uncaughtException", err, "uncaughtException");
+    } else {
+      throw err
+    }
+  }
+}
+globalThis['onRun'] = __skpm_run.bind(this, 'default')
+
+//# sourceMappingURL=__main.js.map

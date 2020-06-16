@@ -9,8 +9,14 @@ import CONFIG from './config';
 var default_asset_export_format = CONFIG.sketch.exportFormat;
 var use_id_for_name = CONFIG.sketch.use_id_for_asset_name;
 var embedSvgConf = CONFIG.sketch.embedSvg;
+var cssFileName = CONFIG.sketch.cssFileName ;
+var htmlFileName = CONFIG.sketch.htmlFileName ;
+var imageFolder = CONFIG.sketch.imageFolder ; 
+var imageScalesString = CONFIG.sketch.imageScalesString ;
+var imageScales = CONFIG.sketch.imageScales ;
 
 var utils_obj = new utils();
+var fileSystem_obj = new fileSystem(context) ; 
 /**
  * Exporter for sketch to HTML.
  *
@@ -23,24 +29,8 @@ function Exporter(context)
 	var doc = require('sketch/dom').getSelectedDocument()
     var selection = doc ? doc.selectedLayers : nil;
     var selectedArtboards = getSelectedArtboards();
-    var imageFormat = default_asset_export_format;
-    var imageScales = [1];
     var embedSvg = false;
     var exportFolder = null;
-    this.file_obj = new fileSystem(context);
-
-    /**
-     * setter method for setting exporter configurations
-     * @TODO : These options should come from the UI (in future release)
-     * @param {*} options
-     */
-    this.setOptions = function(options) 
-    {
-        imageFormat = options.imageFormat;
-        embedSvg = options.embedSvg;
-        imageScales = options.imageScales;
-    }
-
 
     this.getSelection = function() 
     {
@@ -73,9 +63,17 @@ function Exporter(context)
      */
     function layerMarkedForExport(layer) 
     {
-        //var exportOptions = layer.exportFormats;
-        var formats = layer.exportFormats;
-        return formats.length > 0;
+        if(layer.markedForExport != undefined )
+        {
+            return layer.markedForExport ; 
+        }
+        else
+        {
+            var formats = layer.exportFormats;
+            layer.markedForExport = formats.length > 0;
+            return layer.markedForExport
+        } 
+
     }
 
 
@@ -88,8 +86,7 @@ function Exporter(context)
     {
 
         // Using Set so that selected artboards are not repeated and unique
-        var artboardSet = NSMutableSet.alloc().init();
-
+        let artboardSet = new Set()
         var artboards = [];
         for (var i = 0; i < selection.length ; i++) 
         {
@@ -106,12 +103,13 @@ function Exporter(context)
 				artboard = layer.getParentArtboard();
 			}
 			// Make sure artboard is not undefined and is unique using sets
-            if (artboard != undefined && !artboardSet.containsObject(artboard)) 
+            if (artboard != undefined && !artboardSet.has(artboard.id)) 
             {
-                artboardSet.addObject(artboard);
+                artboardSet.add(artboard.id)
                 artboards.push(artboard);
             }
         }
+
         return artboards;
     }
 
@@ -181,7 +179,7 @@ function Exporter(context)
 
         var html = "<html>\n";
         html += "\t<head>\n";
-        html += "\t\t<link href='styles.css' rel='stylesheet'>\n";
+        html += "\t\t<link href='" + cssFileName + "' rel='stylesheet'>\n";
         html += "\t\t<meta charset=\"utf-8\"/>\n"
         html += "\t</head>\n";
         html += "\t<body style=\"margin:0px;\">\n";
@@ -303,7 +301,12 @@ function Exporter(context)
 	{
         // Following code extracts multiple text styles from text using MacOS api, Sketch api does not support
         // Multiple text styles in a layer 
+
         // TODO : Mark all functions that are not part of sketch javascript api
+
+        /* layer.sketchObject.attributedStringValue(), NSMakeRange(0, attrStr.length()),MOPointer.alloc().init()
+        * is not part of official sketch javascript api 
+        */
 		const attrStr = layer.sketchObject.attributedStringValue()
 		const string_text = attrStr.string()
 		let limitRange = NSMakeRange(0, attrStr.length())
@@ -333,20 +336,20 @@ function Exporter(context)
 			)
             if (attributes != null) 
             {
+                // attributes.MSAttributedStringColorAttribute.hexValue is not part of official sketch javascript api 
 				font_colors.push(attributes.MSAttributedStringColorAttribute.hexValue())
 			}
 
 			stringStartIndices.push(effectiveRange.value().location)
 			stringLengths.push(effectiveRange.value().length)
 
+            // NSMakeRange, NSMaxRange is not part of official sketch javascript api 
 			limitRange = NSMakeRange(
 				NSMaxRange(effectiveRange.value()),
 				NSMaxRange(limitRange) - NSMaxRange(effectiveRange.value())
 			)
 		}
 
-
-		let weights = [100, 100, 100, 200, 300, 400, 500, 500, 600, 700, 800, 900, 900, 900, 900, 900];
 
 		const text_span_array = []
         for (var i = 0; i < fonts.length; i++) 
@@ -356,10 +359,14 @@ function Exporter(context)
 			var font = fonts[i];
 			var font_color = font_colors[i];
 
-			let weightIndex = NSFontManager.sharedFontManager().weightOfFont_(layer.sketchObject.font());
-			let weight = weights[weightIndex];
+            /* NSFontManager.sharedFontManager().weightOfFont_ , layer.sketchObject.font()
+            * is not part of official sketch javascript api 
+            */
+            let weightIndex = NSFontManager.sharedFontManager().weightOfFont_(layer.sketchObject.font());
+            var fontName = font.fontName();
 			var fontFamilyName = font.familyName();
-			var fontSize = font.pointSize();
+            var fontSize = font.pointSize();
+            let weight = utils_obj.appKitWeightToCSSWeight(weightIndex, fontName);
 			var sub_string = string_text.substr(stringStartIndices[i], stringLengths[i]);
 			sub_string = sub_string.replace(/(?:\r\n|\r|\n)/g, '<br>');
 
@@ -382,37 +389,32 @@ function Exporter(context)
 	}
     /**
      * Exports images for all the layers to a specified destination, calls exportImages internally
-     * 
-     * @TODO - This is typical file system operation & should be moved in filesystem.js with refactoring
      *
-     * @param {*} _that exported instance
      * @param {*} layers list of layers to be exported
      * @param {*} exportPath the path where the images need to be exported
      */
-    function exportImages(_that, layers, exportPath) 
+    function exportImages(layers, exportPath) 
     {
         layers.forEach(function(layer) {
-            exportImageForLayer(_that, layer, exportPath + "images/", imageFormat, imageScales);
+            exportImageForLayer(layer, exportPath + imageFolder, default_asset_export_format, imageScales);
         });
     }
 
     /**
      * Export images to a specified destination for a particular layer
      *
-     * @param {*} _that exported instance
      * @param {*} layer layer to be exported
      * @param {*} exportPath export path
      * @param {*} imageFormat image format of exported images
      * @param {*} imageScales scale of images to be exported (e.g 2x, 3x)
      */
-    function exportImageForLayer(_that, layer, exportPath, imageFormat, imageScales) 
+    function exportImageForLayer(layer, exportPath, imageFormat, imageScales) 
     {
         const options = {
-            scales: '1, 2, 3',
-            formats: imageFormat
+            scales: imageScalesString,
+            formats: default_asset_export_format
         }
         options['output'] = exportPath
-
         options["use-id-for-name"] = use_id_for_name
         options.trimmed = false
         sketch.export(layer, options)
@@ -423,12 +425,12 @@ function Exporter(context)
                 var appendName = utils_obj.nameForScale(scale);
                 var srcName = exportPath + layer.id + appendName + "." + imageFormat;
                 var dstName = exportPath + layer.layerName + appendName + "." + imageFormat;
-                _that.file_obj.renameFile(srcName, dstName);
+                fileSystem_obj.renameFile(srcName, dstName);
 
             } else {
                 var srcName = exportPath + layer.id + "." + imageFormat;
                 var dstName = exportPath + layer.layerName + "." + imageFormat;
-                _that.file_obj.renameFile(srcName, dstName);
+                fileSystem_obj.renameFile(srcName, dstName);
 
             }
         }
@@ -514,7 +516,6 @@ function Exporter(context)
     {
 
         var borderCssString = ""
-        //  border: border-width border-style border-color|initial|inherit;
         if (border.thickness != undefined) 
         {
             borderCssString += border.thickness + "px ";
@@ -608,26 +609,25 @@ function Exporter(context)
      */
     function generateCSSForLayer(layer) 
     {
+        // Variable to store actual image size of image layer
+        var nsImageSize = undefined
 
         var css = ".sk-asset.sk-" + layer.layerName + " {\n";
         css += "\tleft: " + Math.round(layer.frame.x) + "px;\n";
         css += "\ttop: " + Math.round(layer.frame.y) + "px;\n";
 
         // Set background image for exported layer
-        var nsImageSize = undefined
-
-
         if(checkIfLayerExportedAsImage(layer))
         {
         /* Sketch api often returns wrong width and height for an image. 
          * e.g. In case of layer has shadow or mask property, to prevent bugs due to this
          * Width and height or any image is programmatically extracted from actual exported image using
-         * unofficial Mac api 
+         * unofficial Mac api , NSImage.alloc().initWithData, buffer.toNSData() and nsImage.size() functions are not 
+         * part of official sketch javascript api 
          */
-            var image_full_path = "images/" + layer.layerName + "." + imageFormat;
-            css += "\tbackground-image: url(\"" + image_full_path + "\");\n";
+
             const options = {
-                formats: default_asset_export_format,
+                formats: 'png',
                 output: false
             }
             options.trimmed = false
@@ -635,6 +635,10 @@ function Exporter(context)
             var nsImageForBuffer = buffer.toNSData()
             let nsImage = NSImage.alloc().initWithData(nsImageForBuffer)
             nsImageSize = nsImage.size()
+
+            
+            var image_full_path = imageFolder + layer.layerName + "." + default_asset_export_format;
+            css += "\tbackground-image: url(\"" + image_full_path + "\");\n";
             css += "\twidth: " + Math.round(nsImageSize.width) + "px;\n";
             css += "\theight: " + Math.round(nsImageSize.height) + "px;\n";
 
@@ -669,7 +673,7 @@ function Exporter(context)
                         "only screen and (min-device-pixel-ratio: " + scale + ") {\n";
 
                     css += "\t.sk-asset.sk-" + layer.layerName + " {\n";
-                    var image_full_path = "images/" + layer.layerName + appendName + "." + imageFormat;
+                    var image_full_path =  imageFolder + layer.layerName + appendName + "." + default_asset_export_format;
                     css += "\t\tbackground-image: url(\"" + image_full_path + "\");\n";
                     css += "\t\tbackground-size: " + Math.round(nsImageSize.width) + "px " + Math.round(nsImageSize.height) + "px;\n";
                     css += "\t}\n";
@@ -707,10 +711,9 @@ function Exporter(context)
 		var css = ""
 		css += ".sk-asset.sk-" + layer.layerName + " {\n";
 		css += "\tfont-family: \"" + layer.style.fontFamily + "\" ;\n";
-		css += "\tfont-variant: " + layer.style.fontVariant + " ;\n";
         css += "\tfont-stretch: \"" + layer.style.fontStretch + "\" ;\n";
         // Refer to this solution on sketch forum https://sketchplugins.com/d/193-how-to-get-font-weight/3 
-		css += "\tfont-weight: " + utils_obj.appKitWeightToCSSWeight(layer.style.fontWeight) + " ;\n";
+		css += "\tfont-weight: " + utils_obj.appKitWeightToCSSWeight(layer.style.fontWeight, layer.style.fontVariant) + " ;\n";
 		css += "\tfont-style: " + layer.style.fontStyle + " ;\n";
 
         if (layer.style.textTransform == "uppercase") 
@@ -862,53 +865,34 @@ function Exporter(context)
     this.run = function(folder) 
     {
         exportFolder = folder;
-
-        var _that = this;
         selectedArtboards.forEach(function(artboard) 
         {
 
             var exportPath = exportFolder + utils_obj.cleanString(artboard.name) + "/";
 
             // Delete any previously generated folders
-            _that.file_obj.deleteFile(exportPath);
-            _that.file_obj.createFolder(exportPath);
+            fileSystem_obj.deleteFile(exportPath);
+            fileSystem_obj.createFolder(exportPath);
 
-            var htmlPath = exportPath + "index.html";
+            var htmlPath = exportPath + htmlFileName;
 
-            _that.file_obj.saveTextToFile(htmlPath, generateHTML(artboard));
-
-            var cssPath = exportPath + "styles.css";
-            _that.file_obj.saveTextToFile(cssPath, generateCSS(artboard));
-
+            fileSystem_obj.saveTextToFile(htmlPath, generateHTML(artboard));
+            var cssPath = exportPath + cssFileName ;
+            fileSystem_obj.saveTextToFile(cssPath, generateCSS(artboard));
+            
             if (!embedSvg) 
             {
-                _that.file_obj.createFolder(exportPath + "images/");
-                exportImages(_that, exportedLayers[artboard], exportPath);
+                fileSystem_obj.createFolder(exportPath + imageFolder);
+                exportImages(exportedLayers[artboard], exportPath);
+
             }
+
         });
+
+
     }
 }
 
-/**
- * Gets the default options for the exported
- *
- * @param {*} exporter
- * @returns {Object} options for genus exporter
- */
-function getOptions(exporter) 
-{
-
-    // Return options
-    var options = {};
-    options.imageFormat = default_asset_export_format;
-    options.embedSvg = embedSvgConf;
-    options.imageScales = [];
-    options.imageScales.push(1)
-    options.imageScales.push(2)
-    options.imageScales.push(3)
-
-    return options;
-}
 
 /**
  * This method uses exported function to perform sketch 2 html export, and is also exposed to other modules for use.
@@ -923,6 +907,7 @@ function exportFullHTML(context)
 
     try 
     {
+
         var exporter = new Exporter(context);
         var selectedArtboards = exporter.getSelectedArtboards();
         if (selectedArtboards == undefined || selectedArtboards.length < 1) 
@@ -933,14 +918,13 @@ function exportFullHTML(context)
             return;
         }
 
-        var options = getOptions();
-        exporter.setOptions(options);
 
         // Use the filesystem class to generate directory path
-        var currentDirectoryPath = exporter.file_obj.getCurrentFilePath();
+        var currentDirectoryPath = fileSystem_obj.getCurrentFilePath();
         var exportPath = currentDirectoryPath + "/";
 
         exporter.run(exportPath);
+
         var alertMessage = "Export finished ☺️, Export location: " + currentDirectoryPath;
         sketch.UI.message(alertMessage);
         utils_obj.alert(alertMessage, "genus");
