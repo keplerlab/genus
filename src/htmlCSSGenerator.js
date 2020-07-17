@@ -612,11 +612,9 @@ function Exporter(context)
         // Variable to store actual image size of image layer
         var nsImageSize = undefined
 
+        // Set css name 
         var css = ".sk-asset.sk-" + layer.layerName + " {\n";
-        css += "\tleft: " + Math.round(layer.frame.x) + "px;\n";
-        css += "\ttop: " + Math.round(layer.frame.y) + "px;\n";
-
-        // Set background image for exported layer
+        
         if(checkIfLayerExportedAsImage(layer))
         {
         /* Sketch api often returns wrong width and height for an image. 
@@ -639,6 +637,10 @@ function Exporter(context)
             
             var image_full_path = imageFolder + layer.layerName + "." + default_asset_export_format;
             css += "\tbackground-image: url(\"" + image_full_path + "\");\n";
+            var diffWidth = (layer.frame.width - nsImageSize.width)/2
+            var diffHeight = (layer.frame.height - nsImageSize.height)/2
+            css += "\tleft: " + Math.round(layer.frame.x + diffWidth) + "px;\n";
+            css += "\ttop: " + Math.round(layer.frame.y + diffHeight) + "px;\n";
             css += "\twidth: " + Math.round(nsImageSize.width) + "px;\n";
             css += "\theight: " + Math.round(nsImageSize.height) + "px;\n";
 
@@ -647,6 +649,8 @@ function Exporter(context)
         {
         /* For layer type not image get width height from official sketch javascript api
          */
+            css += "\tleft: " + Math.round(layer.frame.x) + "px;\n";
+            css += "\ttop: " + Math.round(layer.frame.y) + "px;\n";
             css += "\twidth: " + Math.round(layer.frame.width) + "px;\n";
             css += "\theight: " + Math.round(layer.frame.height) + "px;\n";
         }
