@@ -4,7 +4,7 @@ A sketch plugin for exporting prototype website (static html css) from your sket
 
 ## How to install Genus
 1. Make sure you have Sketch installed in your Mac OS machine.
-1. Click on [Genus Github zip download](https://github.com/keplerlab/genus/archive/master.zip) to get the compressed repo.
+1. Click on [Genus Github zip download](https://github.com/keplerlab/genus/releases/latest/download/Genus.sketchplugin.zip) to get the compressed release.
 1. Unzip the downloaded file.
 1. Double click on Genus.sketchplugin to install the plugin.
 
