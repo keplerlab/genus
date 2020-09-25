@@ -165,6 +165,8 @@ function Exporter(context)
             css += generateCSSForLayer(layer);
         });
 
+        css = css.replace(/\n.+(undefined|null).+\n/gi, '\n');
+
         return css;
     }
 
@@ -745,8 +747,8 @@ function Exporter(context)
         {
 			css += "\tcolor: " + layer.style.textColor + " ;\n";
 		}
-		css += "\tfont-size: " + layer.style.fontSize + ".0px ;\n";
-		css += "\tline-height: " + layer.style.lineHeight + ".0px ;\n";
+		css += "\tfont-size: " + Math.round(layer.style.fontSize) + ".0px ;\n";
+		css += "\tline-height: " + Math.round(layer.style.lineHeight) + ".0px ;\n";
 		css += "\topacity: " + layer.style.opacity + " ;\n";
 		css += "\ttext-align: " + layer.style.alignment + " ;\n";
 		css += "\tfont-kerning: " + layer.style.kerning + " ;\n";
@@ -797,7 +799,7 @@ function Exporter(context)
 
             if (!(spanElement.fontSize === undefined)) 
             {
-				spanCss += "\tfont-size: " + spanElement.fontSize + ".0px ;\n";
+				spanCss += "\tfont-size: " + Math.round(spanElement.fontSize) + ".0px ;\n";
 			}
 
 			spanCss += "}\n";
