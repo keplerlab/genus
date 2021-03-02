@@ -45,8 +45,8 @@ A sketch plugin for exporting prototype website (static html css) from your sket
 ## Troubleshooting/Known issues 
 1. If there are any missing fonts notification which comes up on the top right of the Sketch application, please install them.
 1. In case fonts are not rendered properly in the browser, you might want to import the fonts in CSS. This can be done by: 
-    1. Adding Google fonts as per required like the following statement ```@import url('https://fonts.googleapis.com/css?family=Roboto:500,900|PT+Serif:400|Open+Sans:400');``` (this is for the fonts used in genus-test-cases.sketch sample file).
-    1. Copying font files to a font folder and importing them can also make it work.
+    1. Adding Google fonts in your css file e.g. import following statement ```@import url('https://fonts.googleapis.com/css?family=Roboto:500,900|PT+Serif:400|Open+Sans:400');``` (this is for installing fonts used in genus-test-cases.sketch sample file).
+    1. Copying font files to a font folder in your Mac and then can also help fix issue.
 1. In some rare cases font weight rendered by html and sketch could be different. In those cases you might want to check correct font weight from sketch file and edit those values into generated css. 
 
 ## Development Guide
